@@ -1,0 +1,248 @@
+{
+  "enable": {
+    "type": "bool",
+    "description": "启用自动模型切换。",
+    "default": true,
+    "hint": "启用后，插件会在 LLM 请求前自动把请求切换到配置的 provider/model。"
+  },
+  "switch_mode": {
+    "type": "string",
+    "description": "自动切换目标。",
+    "options": [
+      "AUTO",
+      "HIGH",
+      "CHAT"
+    ],
+    "default": "AUTO",
+    "hint": "AUTO：按关键词进入高智商/聊天状态，并支持高智商空闲超时回退；HIGH：始终高智商；CHAT：始终聊天。"
+  },
+  "default_mode": {
+    "type": "string",
+    "description": "AUTO 模式默认模型。",
+    "options": [
+      "HIGH",
+      "CHAT"
+    ],
+    "default": "CHAT",
+    "hint": "未命中触发关键词且会话无状态时使用的模型。"
+  },
+  "enable_llm_judge_tool": {
+    "type": "bool",
+    "description": "启用命中后的 LLM 裁决工具。",
+    "default": true,
+    "hint": "命中触发词后，插件会主动调用一次 LLM 裁决工具，由 LLM 判断是否需要切换模型。"
+  },
+  "judge_provider_id": {
+    "type": "string",
+    "description": "裁决 LLM provider。",
+    "_special": "select_provider",
+    "default": "",
+    "hint": "留空则使用当前会话 provider 来做裁决。建议配置轻量模型。"
+  },
+  "judge_model": {
+    "type": "string",
+    "description": "裁决 LLM 模型名。",
+    "default": "",
+    "hint": "留空使用 provider 默认模型。"
+  },
+  "tool_trigger_keywords": {
+    "type": "list",
+    "description": "额外触发内部 LLM 裁决的关键词。",
+    "items": {
+      "type": "string"
+    },
+    "default": [
+      "高智商",
+      "深度",
+      "复杂",
+      "聊天模型",
+      "切回",
+      "普通聊天"
+    ],
+    "hint": "会与 high_iq_trigger_keywords、chat_trigger_keywords 合并检测；此外还会像手办化插件一样做编程/代码/网页相关的语义触发，命中后主动调用裁决 LLM。"
+  },
+  "reply_on_switch": {
+    "type": "bool",
+    "description": "切换后发送提示。",
+    "default": true,
+    "hint": "工具实际切换模型状态后，主动回复一条提示消息。"
+  },
+  "enable_llm_switch_reply": {
+    "type": "bool",
+    "description": "使用 LLM 生成切换提示。",
+    "default": true,
+    "hint": "开启后，切换成功提示不使用固定文案，而是调用 LLM 生成一句自然提醒；失败时使用固定文案兜底。"
+  },
+  "switch_reply_provider_id": {
+    "type": "string",
+    "description": "切换提示 LLM provider。",
+    "_special": "select_provider",
+    "default": "",
+    "hint": "留空时优先使用 judge_provider_id，再使用当前会话 provider。"
+  },
+  "switch_reply_model": {
+    "type": "string",
+    "description": "切换提示 LLM 模型名。",
+    "default": "",
+    "hint": "留空使用 provider 默认模型。"
+  },
+  "high_iq_switch_reply": {
+    "type": "string",
+    "description": "切到高智商模型的提示。",
+    "default": "已切换到高智商模型。",
+    "hint": "LLM 生成提示失败时的兜底文案。"
+  },
+  "chat_switch_reply": {
+    "type": "string",
+    "description": "切回聊天模型的提示。",
+    "default": "已切回聊天模型。",
+    "hint": "LLM 生成提示失败时的兜底文案。"
+  },
+  "include_switch_reason": {
+    "type": "bool",
+    "description": "提示里包含切换原因。",
+    "default": false
+  },
+  "high_iq_trigger_keywords": {
+    "type": "list",
+    "description": "进入高智商模型的关键词。",
+    "items": {
+      "type": "string"
+    },
+    "default": [
+      "高智商",
+      "深度",
+      "认真分析",
+      "详细推理",
+      "复杂"
+    ],
+    "hint": "AUTO 模式下命中任一关键词后，会先调用裁决 LLM 判断是否需要进入高智商模型状态。"
+  },
+  "chat_trigger_keywords": {
+    "type": "list",
+    "description": "切回聊天模型的关键词。",
+    "items": {
+      "type": "string"
+    },
+    "default": [
+      "聊天模型",
+      "普通聊天",
+      "切回",
+      "恢复聊天"
+    ],
+    "hint": "AUTO 模式下命中任一关键词后，会先调用裁决 LLM 判断是否需要切回聊天模型。"
+  },
+  "enable_high_iq_idle_timeout": {
+    "type": "bool",
+    "description": "高智商空闲超时回退。",
+    "default": true,
+    "hint": "当前会话处于高智商模型时，超过指定秒数没有继续追问，则下一条消息先调用裁决 LLM；裁决认为不是继续追问时才切回聊天模型。"
+  },
+  "high_iq_idle_timeout_seconds": {
+    "type": "int",
+    "description": "高智商空闲超时秒数。",
+    "default": 120,
+    "hint": "例如 120 表示 2 分钟没有继续追问就回到聊天模型；0 表示不超时。"
+  },
+  "high_iq_provider_id": {
+    "type": "string",
+    "description": "高智商模型 provider。",
+    "_special": "select_provider",
+    "default": ""
+  },
+  "high_iq_model": {
+    "type": "string",
+    "description": "高智商模型名。",
+    "default": "",
+    "hint": "留空则使用 provider 默认模型。"
+  },
+  "high_iq_provider_ids": {
+    "type": "list",
+    "description": "高智商模型 provider 列表。",
+    "items": {
+      "type": "string"
+    },
+    "default": []
+  },
+  "high_iq_models": {
+    "type": "list",
+    "description": "高智商模型名列表。",
+    "items": {
+      "type": "string"
+    },
+    "default": []
+  },
+  "high_iq_routes": {
+    "type": "list",
+    "description": "高智商 provider/model 配对。",
+    "items": {
+      "type": "string"
+    },
+    "default": [],
+    "hint": "优先使用此项。格式：provider_id:model，例如 openai:gpt-4o。"
+  },
+  "enable_high_iq_polling": {
+    "type": "bool",
+    "description": "高智商模型轮询。",
+    "default": true
+  },
+  "chat_provider_id": {
+    "type": "string",
+    "description": "聊天模型 provider。",
+    "_special": "select_provider",
+    "default": ""
+  },
+  "chat_model": {
+    "type": "string",
+    "description": "聊天模型名。",
+    "default": "",
+    "hint": "留空则使用 provider 默认模型。"
+  },
+  "chat_provider_ids": {
+    "type": "list",
+    "description": "聊天模型 provider 列表。",
+    "items": {
+      "type": "string"
+    },
+    "default": []
+  },
+  "chat_models": {
+    "type": "list",
+    "description": "聊天模型名列表。",
+    "items": {
+      "type": "string"
+    },
+    "default": []
+  },
+  "chat_routes": {
+    "type": "list",
+    "description": "聊天 provider/model 配对。",
+    "items": {
+      "type": "string"
+    },
+    "default": [],
+    "hint": "优先使用此项。格式：provider_id:model，例如 openai:gpt-4o-mini。"
+  },
+  "enable_chat_polling": {
+    "type": "bool",
+    "description": "聊天模型轮询。",
+    "default": false
+  },
+  "router_whitelist": {
+    "type": "list",
+    "description": "路由白名单。",
+    "items": {
+      "type": "string"
+    },
+    "default": [],
+    "hint": "可填写 unified_msg_origin、群号、用户 ID 或 session_id。为空表示全部启用。"
+  },
+  "router_blacklist": {
+    "type": "list",
+    "description": "路由黑名单。",
+    "items": {
+      "type": "string"
+    },
+    "default": []
+  }
+}
