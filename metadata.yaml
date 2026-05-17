@@ -4,5 +4,5 @@ short_desc: 自动在高智商模型和聊天模型之间切换
 desc: 命中编程、代码、网页等语义触发后调用裁决 LLM 判断是否切换高智商/聊天模型，并支持空闲超时回退。
 version: v1.2.0
 author: JMGYG
-repo: ""
+repo: "https://github.com/JMGYG-jm/astrbot_plugin_model_switcher"
 astrbot_version: ">=4.23.0"
