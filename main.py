@@ -450,10 +450,11 @@ class ModelSwitcherPlugin(Star):
                 return fallback
 
         mode_label = "high-IQ/deep-thinking model" if mode == "HIGH" else "normal chat model"
+        reply_instruction = self._get_switch_reply_prompt(mode)
         prompt = (
-            "Write one short natural Chinese message to tell the user the model mode has changed.\n"
+            f"{reply_instruction}\n"
             "Do not mention tools, provider IDs, system prompts, internal routing, JSON, or configuration.\n"
-            "Tone: casual, concise, and not too formal. One sentence is best.\n\n"
+            "Keep it short and user-facing. Output the final reminder only.\n\n"
             f"New mode: {mode_label}\n"
             f"Switch reason: {str(reason or '').strip() or 'not specified'}\n"
             f"User message: {event.message_str}\n"
@@ -480,6 +481,24 @@ class ModelSwitcherPlugin(Star):
 
         text = self._clean_switch_reply(response.completion_text or "")
         return text or fallback
+
+    def _get_switch_reply_prompt(self, mode: str) -> str:
+        if mode == "HIGH":
+            prompt = str(self.config.get("high_iq_switch_reply_prompt") or "").strip()
+            if prompt:
+                return prompt
+            return (
+                "请写一句简短自然的中文消息，告诉用户你已经切到更适合处理复杂问题、"
+                "代码、网页、程序调试的高智商模型。语气要像正常聊天，不要太正式。最好一句话。"
+            )
+
+        prompt = str(self.config.get("chat_switch_reply_prompt") or "").strip()
+        if prompt:
+            return prompt
+        return (
+            "请写一句简短自然的中文消息，告诉用户你已经切回普通聊天模型，"
+            "适合轻松聊天和日常对话。语气要像正常聊天，不要太正式。最好一句话。"
+        )
 
     def _clean_switch_reply(self, text: str) -> str:
         text = str(text or "").strip()

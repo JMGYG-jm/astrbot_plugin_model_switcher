@@ -86,6 +86,18 @@
     "default": "",
     "hint": "留空使用 provider 默认模型。"
   },
+  "high_iq_switch_reply_prompt": {
+    "type": "text",
+    "description": "切到高智商模型时的 LLM 提醒提示词。",
+    "default": "请写一句简短自然的中文消息，告诉用户你已经切到更适合处理复杂问题、代码、网页、程序调试的高智商模型。语气要像正常聊天，不要太正式，不要提到工具、provider、配置、JSON、系统提示或内部路由。最好一句话。",
+    "hint": "用于让 LLM 生成切到高智商模型后的提醒。可使用语义要求，不需要写变量。"
+  },
+  "chat_switch_reply_prompt": {
+    "type": "text",
+    "description": "切回聊天模型时的 LLM 提醒提示词。",
+    "default": "请写一句简短自然的中文消息，告诉用户你已经切回普通聊天模型，适合轻松聊天和日常对话。语气要像正常聊天，不要太正式，不要提到工具、provider、配置、JSON、系统提示或内部路由。最好一句话。",
+    "hint": "用于让 LLM 生成切回聊天模型后的提醒。可使用语义要求，不需要写变量。"
+  },
   "high_iq_switch_reply": {
     "type": "string",
     "description": "切到高智商模型的提示。",
